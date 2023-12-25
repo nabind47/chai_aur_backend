@@ -4,7 +4,10 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  destroyOnCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -247,6 +250,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   }
 
   //TODO: delete old image - assignment
+  await destroyOnCloudinary(req.user.avatar);
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   if (!avatar.url) {
@@ -271,7 +275,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   }
 
   //TODO: delete old image
-
+  await destroyOnCloudinary(req.user.coverImage);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!coverImage.url) {
